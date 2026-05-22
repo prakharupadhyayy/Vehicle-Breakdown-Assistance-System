@@ -1,0 +1,173 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RoadRescue – User Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/dashboard.css"/>
+</head>
+<body class="dashboard-page">
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">Road<span>Rescue</span></div>
+  <div class="nav-center">
+    <div class="nav-badge user-badge">🚗 User Dashboard</div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-name" id="nav_user_name">Loading...</span>
+    <button class="btn-outline small" onclick="switchToProvider()">Switch to Provider</button>
+    <button class="btn-ghost small" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="sidebar-menu">
+      <a class="sidebar-item active" data-section="new-request" onclick="showSection('new-request')">
+        <span class="si-icon">🆘</span><span>New Request</span>
+      </a>
+      <a class="sidebar-item" data-section="my-requests" onclick="showSection('my-requests')">
+        <span class="si-icon">📋</span><span>My Requests</span>
+        <span class="badge" id="active_badge"></span>
+      </a>
+      <a class="sidebar-item" data-section="request-status" onclick="showSection('request-status')">
+        <span class="si-icon">📡</span><span>Live Status</span>
+      </a>
+    </div>
+    <div class="sidebar-footer">
+      <div class="sos-btn" onclick="showSection('new-request')">
+        <span>🆘 SOS</span>
+        <small>Raise Request</small>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- NEW REQUEST SECTION -->
+    <section id="section-new-request" class="content-section active">
+      <div class="section-header">
+        <h2>Raise a Breakdown Request</h2>
+        <p>Fill in your breakdown details and nearby providers will be notified</p>
+      </div>
+      <div class="card form-card">
+        <form id="requestForm">
+          <div class="form-group">
+            <label>Breakdown Issue Type</label>
+            <div class="issue-grid">
+              <label class="issue-card">
+                <input type="radio" name="issue_type" value="Flat Tyre"/>
+                <span class="ic-icon">🛞</span>
+                <span>Flat Tyre</span>
+              </label>
+              <label class="issue-card">
+                <input type="radio" name="issue_type" value="Dead Battery"/>
+                <span class="ic-icon">🔋</span>
+                <span>Dead Battery</span>
+              </label>
+              <label class="issue-card">
+                <input type="radio" name="issue_type" value="Engine Failure"/>
+                <span class="ic-icon">⚙️</span>
+                <span>Engine Failure</span>
+              </label>
+              <label class="issue-card">
+                <input type="radio" name="issue_type" value="Out of Fuel"/>
+                <span class="ic-icon">⛽</span>
+                <span>Out of Fuel</span>
+              </label>
+              <label class="issue-card">
+                <input type="radio" name="issue_type" value="Accident Damage"/>
+                <span class="ic-icon">💥</span>
+                <span>Accident</span>
+              </label>
+              <label class="issue-card">
+                <input type="radio" name="issue_type" value="Other"/>
+                <span class="ic-icon">🔧</span>
+                <span>Other Issue</span>
+              </label>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Description <span class="optional">(Optional)</span></label>
+            <textarea id="req_description" placeholder="Describe the issue in more detail..." rows="3"></textarea>
+          </div>
+          <div class="form-group">
+            <label>Your Current Location</label>
+            <div class="location-row">
+              <input type="text" id="req_location" placeholder="Enter your location / address" required/>
+              <button type="button" class="btn-locate" onclick="detectLocation()">
+                <span>📍 Detect</span>
+              </button>
+            </div>
+            <input type="hidden" id="req_lat"/>
+            <input type="hidden" id="req_lng"/>
+          </div>
+          <div id="req_msg" class="form-msg"></div>
+          <button type="submit" class="btn-primary btn-lg" id="submitReqBtn">
+            🆘 Raise Emergency Request
+          </button>
+        </form>
+      </div>
+    </section>
+
+    <!-- MY REQUESTS SECTION -->
+    <section id="section-my-requests" class="content-section">
+      <div class="section-header">
+        <h2>My Requests</h2>
+        <p>All your breakdown requests and their current status</p>
+      </div>
+      <div id="my_requests_container">
+        <div class="loading-state">Loading your requests...</div>
+      </div>
+    </section>
+
+    <!-- LIVE STATUS SECTION -->
+    <section id="section-request-status" class="content-section">
+      <div class="section-header">
+        <h2>Live Request Status</h2>
+        <p>Real-time updates from your service provider</p>
+      </div>
+      <div id="live_status_container">
+        <div class="empty-state">
+          <div class="es-icon">📡</div>
+          <div class="es-title">No Active Request</div>
+          <div class="es-desc">When a provider accepts your request, live updates will appear here.</div>
+          <button class="btn-primary" onclick="showSection('new-request')">Raise a Request</button>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- RATING MODAL -->
+<div id="ratingModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>Rate Your Provider</h3>
+    <p id="rating_provider_name" class="modal-sub"></p>
+    <div class="star-rating" id="starRating">
+      <span class="star" data-val="1">★</span>
+      <span class="star" data-val="2">★</span>
+      <span class="star" data-val="3">★</span>
+      <span class="star" data-val="4">★</span>
+      <span class="star" data-val="5">★</span>
+    </div>
+    <textarea id="rating_review" placeholder="Write a review (optional)..." rows="3"></textarea>
+    <input type="hidden" id="rating_request_id"/>
+    <input type="hidden" id="rating_provider_id"/>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="submitRating()">Submit Rating</button>
+      <button class="btn-ghost" onclick="closeModal()">Skip</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/dashboard-user.js"></script>
+</body>
+</html>
