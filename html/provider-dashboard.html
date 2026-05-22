@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>RoadRescue – Provider Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet"/>
+<link rel="stylesheet" href="css/style.css"/>
+<link rel="stylesheet" href="css/dashboard.css"/>
+</head>
+<body class="dashboard-page provider-theme">
+
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-logo">Road<span>Rescue</span></div>
+  <div class="nav-center">
+    <div class="nav-badge provider-badge">🔧 Provider Dashboard</div>
+  </div>
+  <div class="nav-right">
+    <span class="nav-name" id="nav_provider_name">Loading...</span>
+    <button class="btn-outline small" onclick="switchToUser()">Switch to User</button>
+    <button class="btn-ghost small" onclick="logout()">Logout</button>
+  </div>
+</nav>
+
+<div class="dashboard-layout">
+
+  <!-- SIDEBAR -->
+  <aside class="sidebar">
+    <div class="provider-status-card">
+      <div class="psc-label">Your Status</div>
+      <div class="status-toggle">
+        <button class="st-btn active" id="st_available" onclick="setProviderStatus('available')">Available</button>
+        <button class="st-btn" id="st_offline" onclick="setProviderStatus('offline')">Offline</button>
+      </div>
+    </div>
+    <div class="sidebar-menu">
+      <a class="sidebar-item active" data-section="pending" onclick="showSection('pending')">
+        <span class="si-icon">🔔</span><span>Pending Requests</span>
+        <span class="badge pulse" id="pending_badge">0</span>
+      </a>
+      <a class="sidebar-item" data-section="my-jobs" onclick="showSection('my-jobs')">
+        <span class="si-icon">💼</span><span>My Jobs</span>
+      </a>
+      <a class="sidebar-item" data-section="stats" onclick="showSection('stats')">
+        <span class="si-icon">📊</span><span>Stats</span>
+      </a>
+    </div>
+  </aside>
+
+  <!-- MAIN CONTENT -->
+  <main class="main-content">
+
+    <!-- PENDING REQUESTS -->
+    <section id="section-pending" class="content-section active">
+      <div class="section-header">
+        <h2>Pending Requests Near You</h2>
+        <p>Accept a request to start helping someone in need</p>
+        <button class="btn-outline small" onclick="loadPendingRequests()">🔄 Refresh</button>
+      </div>
+      <div id="pending_requests_container">
+        <div class="loading-state">Loading requests...</div>
+      </div>
+    </section>
+
+    <!-- MY JOBS -->
+    <section id="section-my-jobs" class="content-section">
+      <div class="section-header">
+        <h2>My Jobs</h2>
+        <p>Requests you have accepted – update status and communicate</p>
+      </div>
+      <div id="my_jobs_container">
+        <div class="loading-state">Loading your jobs...</div>
+      </div>
+    </section>
+
+    <!-- STATS -->
+    <section id="section-stats" class="content-section">
+      <div class="section-header">
+        <h2>My Statistics</h2>
+        <p>Your performance overview</p>
+      </div>
+      <div id="stats_container">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="sc-icon">✅</div>
+            <div class="sc-val" id="stat_completed">–</div>
+            <div class="sc-label">Jobs Completed</div>
+          </div>
+          <div class="stat-card">
+            <div class="sc-icon">⭐</div>
+            <div class="sc-val" id="stat_rating">–</div>
+            <div class="sc-label">Avg Rating</div>
+          </div>
+          <div class="stat-card">
+            <div class="sc-icon">🔥</div>
+            <div class="sc-val" id="stat_active">–</div>
+            <div class="sc-label">Active Jobs</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+  </main>
+</div>
+
+<!-- UPDATE MODAL -->
+<div id="updateModal" class="modal-overlay hidden">
+  <div class="modal-box">
+    <h3>Send Status Update</h3>
+    <p class="modal-sub">Update the user on your current status</p>
+    <div class="quick-updates">
+      <button class="qu-btn" onclick="setQuickMsg('I am on my way to your location.')">On my way</button>
+      <button class="qu-btn" onclick="setQuickMsg('Reached your location. Starting work now.')">Arrived</button>
+      <button class="qu-btn" onclick="setQuickMsg('Work in progress. Will take 15-20 minutes.')">In progress</button>
+      <button class="qu-btn" onclick="setQuickMsg('Need to arrange parts. ETA 30 minutes.')">Getting parts</button>
+    </div>
+    <textarea id="update_message" placeholder="Type your update message..." rows="3"></textarea>
+    <input type="hidden" id="update_request_id"/>
+    <div class="modal-actions">
+      <button class="btn-primary" onclick="sendUpdate()">Send Update</button>
+      <button class="btn-ghost" onclick="closeModal()">Cancel</button>
+    </div>
+  </div>
+</div>
+
+<script src="js/dashboard-provider.js"></script>
+</body>
+</html>
